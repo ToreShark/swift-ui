@@ -17,4 +17,14 @@ export class FilterService {
     async findByColorCategory(filterDto: FilterProductsDto): Promise<Product[]> {
         return this.productModel.find({ colorCategory: filterDto.colorCategory }).exec();
     }
+
+    async findByFilters(filterDto: FilterProductsDto): Promise<Product[]> {
+        const query = {};
+
+        if (filterDto.colorCategory) {
+            query['colorCategory'] = filterDto.colorCategory;
+        }
+
+        return this.productModel.find(query).exec();
+    }
 }

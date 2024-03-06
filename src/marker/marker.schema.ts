@@ -8,6 +8,9 @@ export class Marker extends Document {
 
     @Prop({ required: true })
     secondaryWord: String;
+
+    @Prop({ type: [{ type: Types.ObjectId, ref: 'Filter' }] })
+    filterIds: Types.ObjectId[];
 }
 
 export const MarkerSchema = SchemaFactory.createForClass(Marker);

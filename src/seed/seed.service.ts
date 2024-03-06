@@ -6,6 +6,7 @@ import {Product} from "../products/products.schema";
 import {Filter} from "../filter/filter.group";
 import {Marker} from "../marker/marker.schema";
 
+
 @Injectable()
 export class SeedService {
     constructor(
@@ -15,21 +16,32 @@ export class SeedService {
         @InjectModel(Marker.name) private markerModel: Model<Marker>,
     ) {}
 
+    async getFilterId(primaryWord: string): Promise<Types.ObjectId> {
+        const filter = await this.filterModel.findOne({ primaryWord });
+        return filter ? filter._id : undefined;
+    }
+
     async seedGroups(): Promise<void> {
         await this.groupModel.deleteMany({})
         const products = await this.seedProducts(); // Товары специфичные для ухода за кожей лица
         const productIds = products.map(product => product._id);
 
-        const filters = await this.seedFilters(); // Фильтры, соответствующие категории ухода за кожей лица
-        const filterIds = filters.map(filter => filter._id);
-
+        const allFilterId: Types.ObjectId = await this.getFilterId('Все');
+        const hitsFilterId: Types.ObjectId = await this.getFilterId('Хиты');
+        const discountsFilterId: Types.ObjectId = await this.getFilterId('Скидки');
+        const markupsFilterId: Types.ObjectId = await this.getFilterId('Наценки');
+        const coldFilterId: Types.ObjectId = await this.getFilterId('Холодные');
+        const warmFilterId: Types.ObjectId = await this.getFilterId('Теплые');
+        const wetFilterId: Types.ObjectId = await this.getFilterId('Мокрые');
+        
+        
         // Создаем группу "Уход за кожей лица"
         const group = new this.groupModel({
             _id: new Types.ObjectId(),
             name: 'Уход за кожей лица',
             details: 'Продукты для ежедневного ухода за кожей лица, включая кремы, сыворотки и маски',
             items: productIds,
-            filters: filterIds,
+            filters: [allFilterId, hitsFilterId, coldFilterId],
             picture: Buffer.from('somepicturedata', 'base64'), // Предполагаем, что это демонстрационное изображение
         });
 
@@ -37,12 +49,12 @@ export class SeedService {
 
         console.log('Seeding groups complete!');
     }
-
     async seedProducts(): Promise<Product[]> {
         // Удаление существующих продуктов для чистого seeding (опционально)
         await this.productModel.deleteMany({});
 
         const markers = await this.seedMarkers();
+        console.log('markers created', markers);
 
         const products = [
             new this.productModel({
@@ -68,7 +80,6 @@ export class SeedService {
 
         return products;
     }
-
     async seedFilters(): Promise<Filter[]> {
         await this.filterModel.deleteMany({});
 
@@ -95,14 +106,31 @@ export class SeedService {
     async seedMarkers(): Promise<Marker[]> {
         await this.markerModel.deleteMany({});
 
+        const filters = await this.filterModel.find({
+            primaryWord: { $in: ["Все", "Холодные"] }
+        });
+
+        const filterMap: Record<string, Types.ObjectId> = filters.reduce((acc, filter) => {
+            acc[filter.primaryWord as keyof Record<string, Types.ObjectId>] = filter._id;
+            return acc;
+        }, {});
+
         const markers = [
             new this.markerModel({
                 _id: new Types.ObjectId(),
                 secondaryWord: 'Сухая',
+                filterIds: [
+                    filterMap["Все"],
+                    filterMap["Холодные"]
+                ],
             }),
             new this.markerModel({
                 _id: new Types.ObjectId(),
                 secondaryWord: 'Гидратация',
+                filterIds: [
+                    filterMap["Все"],
+                    filterMap["Холодные"]
+                ],
             }),
             // Добавьте столько маркеров, сколько нужно
         ];
