@@ -5,12 +5,14 @@ import {FilterModule} from "../filter/filter.module";
 import {ProductModule} from "../products/product.module";
 import {MongooseModule} from "@nestjs/mongoose";
 import {SeedController} from "./seed.controller";
+import {MarkerModule} from "../marker/marker.module";
 
 @Module({
     imports: [
         GroupModule,
         FilterModule,
-        ProductModule
+        ProductModule,
+        MarkerModule,
     ],
     providers: [SeedService],
     controllers: [SeedController]

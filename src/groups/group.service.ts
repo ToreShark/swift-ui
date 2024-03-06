@@ -15,23 +15,18 @@ export class GroupService {
     ) {}
 
     async findByIdWithProducts(findGroupDto: FindGroupDto): Promise<Group | null> {
-        console.log('Начало запроса', findGroupDto.id);
         try {
             const objectId = new Types.ObjectId(findGroupDto.id);
             const result = await this.groupModel.findOne({ "_id": objectId }).populate('items').exec();
-            console.log('Результат запроса с populate:', result);
 
             if (result) {
                 const fullResult: Group = result.toObject();
 
-                console.log('Полный результат с populate:', fullResult);
                 return fullResult;
             } else {
-                console.log('Группа с указанным ID не найдена.');
                 return null;
             }
         } catch (error) {
-            console.error('Ошибка при выполнении запроса:', error);
             throw new InternalServerErrorException('Ошибка при выполнении запроса');
         }
     }

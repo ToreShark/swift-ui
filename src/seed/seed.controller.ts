@@ -36,4 +36,14 @@ export class SeedController {
             throw new InternalServerErrorException('Seeding filters failed');
         }
     }
+    @Get('/markers')
+    async seedMarkers(): Promise<void> {
+        try {
+            await this.seedService.seedMarkers();
+            console.log('Seeding markers complete!');
+        } catch (error) {
+            console.error('Seeding markers failed:', error);
+            throw new InternalServerErrorException('Seeding filters failed');
+        }
+    }
 }

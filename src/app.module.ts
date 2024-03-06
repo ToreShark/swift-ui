@@ -7,6 +7,7 @@ import {MongooseModule} from "@nestjs/mongoose";
 import { SeedModule } from './seed/seed.module';
 import {ProductModule} from "./products/product.module";
 import {FilterModule} from "./filter/filter.module";
+import { MarkerModule } from './marker/marker.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {FilterModule} from "./filter/filter.module";
     SeedModule,
       ProductModule,
       FilterModule,
+      MarkerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
