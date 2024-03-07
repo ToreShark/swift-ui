@@ -12,10 +12,8 @@ export class GroupsController {
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<Group> {
         const findGroupDto = { id }; // Предполагается, что у вас есть DTO с полем id
-        console.log(findGroupDto)
         try {
             const result = await this.groupsService.findByIdWithProducts(findGroupDto);
-            console.log(result);
             return result;
         } catch (error) {
             console.error('Error fetching group with products:', error);
