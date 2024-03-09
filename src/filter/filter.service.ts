@@ -17,27 +17,40 @@ export class FilterService {
         @InjectModel(Filter.name) private filterModel: Model<Filter>
     ) {}
 
-    async findByColorCategory(filterDto: FilterProductsDto): Promise<Product[]> {
-        return this.productModel.find({ colorCategory: filterDto.colorCategory }).exec();
-    }
+    // async findByColorCategory(filterDto: FilterProductsDto): Promise<Product[]> {
+    //     return this.productModel.find({ colorCategory: filterDto.colorCategory }).exec();
+    // }
 
     async findByFilters(filterDto: FilterProductsDto): Promise<Product[]> {
-        if (!filterDto.filterId) {
-            throw new Error('Filter ID is required');
+        const filterId = new Types.ObjectId(filterDto.filterId);
+        console.log('filterId', filterId);
+        const filter = await this.filterModel.findById(filterId).exec();
+        console.log('filter', filter);
+        if (!filter) {
+            throw new Error('Filter not found');
         }
 
-        const filterId = new Types.ObjectId(filterDto.filterId); // Приведение к ObjectId, если это необходимо
-        const markers = await this.markerModel.find({ "filterIds": filterId }).exec();
+        // Шаг 1: Получить все маркеры
+        const allMarkers = await this.markerModel.find().exec();
+        console.log('allMarkers', allMarkers);
 
+        // Шаг 2: Фильтровать маркеры в приложении
+        const markers = await this.markerModel.find({ secondaryWord: filter.primaryWord }).exec();
         if (markers.length === 0) {
-            console.log('No markers found for the given filter ID:', filterDto.filterId);
             return [];
         }
 
         const markerIds = markers.map(marker => marker._id);
-        const products = await this.productModel.find({ markers: { $in: markerIds } }).exec();
+        console.log('markerIds', markerIds)
 
-        console.log('Filtered products:', products);
+        // Шаг 3: Ищем продукты, содержащие эти маркеры
+        // Предполагается, что переменная products уже содержит продукты, полученные из MongoDB
+        const products = await this.productModel.find({
+            "markers": { $in: markerIds }
+        }).exec();
+
+        // console.log('Products with marker:', products);
+
         return products;
     }
 }

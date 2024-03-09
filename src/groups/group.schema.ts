@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {Product} from "../products/products.schema";
 
-@Schema()
+@Schema({ collection: 'Groups' })
 export class Group extends Document {
     @Prop({required: true, type: Types.ObjectId})
     _id: Types.ObjectId;
@@ -14,7 +14,7 @@ export class Group extends Document {
     @Prop()
     details: String;
 
-    @Prop({type: [{type: Types.ObjectId, ref: 'Product'}]})
+    @Prop({type: [{type: Types.ObjectId, ref: 'Products'}]})
     items: Product[];
 
     @Prop()

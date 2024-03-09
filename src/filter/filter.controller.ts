@@ -8,6 +8,7 @@ export class FilterController {
 
     @Get('products')
     async findProductsByFilter(@Query() filterProductsDto: FilterProductsDto) {
+        console.log(filterProductsDto);
         return await this.filterService.findByFilters(filterProductsDto);
     }
 }

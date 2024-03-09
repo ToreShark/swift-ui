@@ -11,7 +11,7 @@ import { MarkerModule } from './marker/marker.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://new_user_blya:2AKHOE1lpZYSoPru@cluster0.lgtepjy.mongodb.net/?retryWrites=true&w=majority'),
+    MongooseModule.forRoot('mongodb+srv://new_user_blya:2AKHOE1lpZYSoPru@cluster0.lgtepjy.mongodb.net/sergey_test_1?retryWrites=true&w=majority'),
     GroupModule,
     SeedModule,
       ProductModule,

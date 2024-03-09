@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Marker } from "../marker/marker.schema";
 
-@Schema()
+@Schema({ collection: 'Products' })
 export class Product extends Document {
     @Prop({ required: true, type: Types.ObjectId })
     _id: Types.ObjectId;
