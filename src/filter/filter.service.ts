@@ -11,28 +11,25 @@ import {Marker} from "../marker/marker.schema";
 @Injectable()
 export class FilterService {
     constructor(
-        // @InjectModel(Group.name) private groupModel: Model<IGroup>,
+        @InjectModel(Group.name) private groupModel: Model<IGroup>,
         @InjectModel(Product.name) private productModel: Model<Product>,
         @InjectModel(Marker.name) private markerModel: Model<Marker>, // Добавляем модель маркера
         @InjectModel(Filter.name) private filterModel: Model<Filter>
     ) {}
 
-    // async findByColorCategory(filterDto: FilterProductsDto): Promise<Product[]> {
-    //     return this.productModel.find({ colorCategory: filterDto.colorCategory }).exec();
-    // }
-
     async findByFilters(filterDto: FilterProductsDto): Promise<Product[]> {
         const filterId = new Types.ObjectId(filterDto.filterId);
-        console.log('filterId', filterId);
+        const groupId = new Types.ObjectId(filterDto.groupId);
+
+        const group = await this.groupModel.findById(groupId).exec();
+        if (!group) {
+            throw new Error('Group not found');
+        }
+        
         const filter = await this.filterModel.findById(filterId).exec();
-        console.log('filter', filter);
         if (!filter) {
             throw new Error('Filter not found');
         }
-
-        // Шаг 1: Получить все маркеры
-        const allMarkers = await this.markerModel.find().exec();
-        console.log('allMarkers', allMarkers);
 
         // Шаг 2: Фильтровать маркеры в приложении
         const markers = await this.markerModel.find({ secondaryWord: filter.primaryWord }).exec();
@@ -44,13 +41,11 @@ export class FilterService {
         console.log('markerIds', markerIds)
 
         // Шаг 3: Ищем продукты, содержащие эти маркеры
-        // Предполагается, что переменная products уже содержит продукты, полученные из MongoDB
         const products = await this.productModel.find({
+            "_id": { $in: group.items },
             "markers": { $in: markerIds }
         }).exec();
-
-        // console.log('Products with marker:', products);
-
+        
         return products;
     }
 }
