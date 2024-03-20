@@ -21,7 +21,12 @@ export class GroupsController {
         }
     }
     @Get()
-    async listAll(): Promise<IGroup[]> {
-        return this.groupsService.listAllGroups();
+    async listAll(): Promise<any[]> { // Изменено возвращаемое значение на Promise<any[]>
+        try {
+            return await this.groupsService.listAllWithData(); // Вызов метода listAllWithData
+        } catch (error) {
+            console.error('Error fetching all groups data:', error);
+            throw new InternalServerErrorException('Error fetching all groups data');
+        }
     }
 }

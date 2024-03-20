@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, InternalServerErrorException} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model, Types} from 'mongoose';
 import {Filter} from "./filter.group";
@@ -47,5 +47,13 @@ export class FilterService {
         }).exec();
         
         return products;
+    }
+
+    async listAllFilters(): Promise<Filter[]> {
+        try {
+            return await this.filterModel.find().exec();
+        } catch (error) {
+            throw new InternalServerErrorException('Ошибка при получении списка фильтров');
+        }
     }
 }

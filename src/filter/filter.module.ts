@@ -1,4 +1,4 @@
-import {Module} from "@nestjs/common";
+import {forwardRef, Module} from "@nestjs/common";
 import {MongooseModule} from "@nestjs/mongoose";
 import {Filter, FilterSchema} from "./filter.group";
 import {FilterService} from "./filter.service";
@@ -12,11 +12,11 @@ import {GroupModule} from "../groups/group.module";
         ProductModule,
         MarkerModule,
         FilterModule,
-        GroupModule
+        forwardRef(() => GroupModule)
     ],
     controllers: [FilterController],
     providers: [FilterService],
-    exports: [MongooseModule]
+    exports: [FilterService, MongooseModule]
 })
 
 export class FilterModule {
