@@ -8,6 +8,7 @@ import {FindGroupDto} from "./group.dto/group.dto";
 import {IGroup} from "./interface/IGroup";
 import {FilterService} from "../filter/filter.service";
 import {MarkerService} from "../marker/marker.service";
+import {ProductsService} from "../products/products.service";
 
 @Injectable()
 export class GroupService {
@@ -15,7 +16,8 @@ export class GroupService {
         @InjectModel(Group.name) private groupModel: Model<IGroup>,
         @InjectModel(Product.name) private productModel: Model<Product>,
         private filterService: FilterService,
-        private markerService: MarkerService
+        private markerService: MarkerService,
+        private productService: ProductsService
     ) {}
 
     async findByIdWithProducts(findGroupDto: FindGroupDto): Promise<Group | null> {
@@ -43,13 +45,17 @@ export class GroupService {
             const groups = await this.listAllGroups();
             const filters = await this.filterService.listAllFilters();
             const markers = await this.markerService.listAllMarkers();
+            const products = await this.productService.listAllProducts(); // Получение всех продуктов
 
             return groups.map(group => {
                 const groupFilters = filters.filter(filter =>
                     Array.isArray(group.filters) && group.filters.some(groupFilter => groupFilter._id.equals(filter._id))
                 );
 
-                const enrichedProducts = group.items.map(product => {
+                // Предполагается, что group.items содержит идентификаторы продуктов
+                const enrichedProducts = products.filter(product =>
+                    group.items.some(itemId => itemId.equals(product._id))
+                ).map(product => {
                     const productMarkers = markers.filter(marker =>
                         Array.isArray(product.markers) && product.markers.some(productMarker => productMarker._id.equals(marker._id))
                     );
@@ -59,8 +65,8 @@ export class GroupService {
                         name: product.name,
                         productModel: product.productModel,
                         price: product.price,
-                        mainPhoto: product.mainPhoto, // Предполагается, что это URL или base64 строка изображения
-                        photos: product.photos, // Предполагается, что это массив URL или base64 строк изображений
+                        mainPhoto: product.mainPhoto,
+                        photos: product.photos,
                         temperature: product.temperature,
                         technology: product.technology,
                         hairColor: product.hairColor,
@@ -68,7 +74,7 @@ export class GroupService {
                         details: product.details,
                         application: product.application,
                         composition: product.composition,
-                        relatedProducts: product.relatedProducts ? product.relatedProducts.map(rp => rp._id.toString()) : [], // Предполагается, что это массив идентификаторов связанных продуктов
+                        relatedProducts: product.relatedProducts ? product.relatedProducts.map(rp => rp._id.toString()) : [],
                         markers: productMarkers.map(marker => ({
                             _id: marker._id.toString(),
                             secondaryWord: marker.secondaryWord
