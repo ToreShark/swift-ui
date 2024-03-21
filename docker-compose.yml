@@ -7,8 +7,8 @@ services:
     environment:
       - DATABASE_URL=mongodb+srv://new_user_blya:2AKHOE1lpZYSoPru@cluster0.lgtepjy.mongodb.net/sergey_test_1?retryWrites=true&w=majority
     restart: unless-stopped
-    volumes:
-      - app-data:/usr/src/app
+#    volumes:
+#      - app-data:/usr/src/app
 
-volumes:
-  app-data:
+#volumes:
+#  app-data:
