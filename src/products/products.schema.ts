@@ -11,7 +11,7 @@ export class Product extends Document {
     name: string; 
 
     @Prop()
-    productModel: string; 
+    productModel: string; // model : есть такая переменная переназите модель
 
     @Prop()
     price: string;

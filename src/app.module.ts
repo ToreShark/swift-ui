@@ -8,6 +8,8 @@ import { SeedModule } from './seed/seed.module';
 import {ProductModule} from "./products/product.module";
 import {FilterModule} from "./filter/filter.module";
 import { MarkerModule } from './marker/marker.module';
+import { UsersModule } from './users/users.module';
+import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { MarkerModule } from './marker/marker.module';
       ProductModule,
       FilterModule,
       MarkerModule,
+      UsersModule,
+      IamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
