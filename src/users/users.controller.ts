@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller('users')
 export class UsersController {
@@ -11,6 +12,13 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
+
+  // create fetchUser By id
+  @Get('fetchUser/:id')
+  fetchUser(@Param('id') id: string) {
+    return this.usersService.fetchUser(id);
+  }
+  
 
   @Get()
   findAll() {
@@ -30,5 +38,10 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleCron() {
+    const deletedCount = await this.usersService.cleanExpiredOtp();
+    console.log(`Cleaned ${deletedCount} expired OTP records.`);
   }
 }

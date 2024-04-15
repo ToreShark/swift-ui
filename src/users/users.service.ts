@@ -68,4 +68,17 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+  //
+  async cleanExpiredOtp(): Promise<number> {
+    const result = await this.otpModel.deleteMany({
+      expirationDate: { $lt: new Date() }
+    });
+    return result.deletedCount; // возвращает количество удаленных документов
+  }
+
+  // create fetchUser by id
+  async fetchUser(id: string): Promise<User | null> {
+    const user = await this.userModel.findById(id);
+    return user;
+  }
 }

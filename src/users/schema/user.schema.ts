@@ -37,6 +37,9 @@ export class User extends Document {
     @Prop()
     lastSeenAt: Date;
 
+    @Prop({ type: [{ type: String, required: true }] })
+    tokens: string[];
+
     @Prop({ type: [{ type: Types.ObjectId, ref: 'Order' }] })
     orders: Types.Array<Order>;
 }
