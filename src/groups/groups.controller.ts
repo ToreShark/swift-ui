@@ -4,7 +4,10 @@ import {PipelineStage} from "mongoose";
 import {GroupService} from "./group.service";
 import {Group} from "./group.schema";
 import {IGroup} from "./interface/IGroup";
+import { AuthType } from "src/iam/authentication/enum/auth-type.enum";
+import { Auth } from "src/iam/authentication/decorator/auth.decorator";
 
+@Auth(AuthType.None)
 @Controller('groups')
 export class GroupsController {
     constructor(private readonly groupsService: GroupService) {}
