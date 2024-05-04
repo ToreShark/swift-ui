@@ -3,7 +3,7 @@ services:
   app:
     build: .
     ports:
-      - "3001:3000"
+      - "444:3000"
     environment:
       - DATABASE_URL=mongodb+srv://user123:sdbs312@cluster0.6ggsm1q.mongodb.net/DB6?retryWrites=true&w=majority&appName=Cluster0
     restart: unless-stopped
