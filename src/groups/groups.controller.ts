@@ -8,7 +8,7 @@ import { AuthType } from "src/iam/authentication/enum/auth-type.enum";
 import { Auth } from "src/iam/authentication/decorator/auth.decorator";
 
 @Auth(AuthType.None)
-@Controller('groups')
+@Controller('Groups')
 export class GroupsController {
     constructor(private readonly groupsService: GroupService) {}
 
