@@ -16,7 +16,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb+srv://new_user_blya:2AKHOE1lpZYSoPru@cluster0.lgtepjy.mongodb.net/sergey_test_1?retryWrites=true&w=majority'),
+    MongooseModule.forRoot('mongodb+srv://user123:sdbs312@cluster0.6ggsm1q.mongodb.net/DB6?retryWrites=true&w=majority&appName=Cluster0'),
     GroupModule,
     ScheduleModule.forRoot(),
     SeedModule,
