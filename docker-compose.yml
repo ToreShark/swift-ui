@@ -5,11 +5,15 @@ services:
     ports:
       - "3001:3000"
       # - "444:3001"
-    environment:
-      - DATABASE_URL=mongodb+srv://user123:sdbs312@cluster0.6ggsm1q.mongodb.net/DB6?retryWrites=true&w=majority&appName=Cluster0
+    # environment:
+    #  - DATABASE_URL=mongodb+srv://user123:uUWFZVkTxU3MaYNX@cluster0.6ggsm1q.mongodb.net/DB6?retryWrites=true&w=majority
+    env_file:
+      - .env
     restart: unless-stopped
 #    volumes:
 #      - app-data:/usr/src/app
+    volumes:
+      - app-data:/usr/src/app
 
-#volumes:
-#  app-data:
+volumes:
+ app-data:
