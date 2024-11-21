@@ -18,7 +18,7 @@ import {ProductModule} from "../products/product.module";
     ],
     controllers: [GroupsController],
     providers: [GroupService],
-    exports: [MongooseModule]
+    exports: [GroupService, MongooseModule]
 })
 
 export class GroupModule {};

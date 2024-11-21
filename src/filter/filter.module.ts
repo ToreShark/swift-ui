@@ -11,7 +11,7 @@ import {GroupModule} from "../groups/group.module";
     imports: [MongooseModule.forFeature([{name: Filter.name, schema: FilterSchema}]),
         ProductModule,
         MarkerModule,
-        FilterModule,
+        // FilterModule,
         forwardRef(() => GroupModule)
     ],
     controllers: [FilterController],
