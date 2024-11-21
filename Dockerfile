@@ -11,10 +11,10 @@ COPY . .
 RUN npm install && npm install pm2 -g
 
 # Собираем проект, если это необходимо (зависит от проекта)
-# RUN npm run build
+RUN npm run build
 
 # Открываем порт, который использует приложение
 EXPOSE 3000
 
 # Запускаем приложение с помощью PM2
-CMD ["pm2-runtime", "start", "npm", "--", "start"]
+CMD ["pm2-runtime", "start", "dist/main.js"]
