@@ -10,13 +10,23 @@ import {FilterModule} from "./filter/filter.module";
 import { MarkerModule } from './marker/marker.module';
 import { UsersModule } from './users/users.module';
 import { IamModule } from './iam/iam.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DATABASE_URL),
+    ConfigModule.forRoot(
+      {
+        isGlobal: true
+      }
+    ),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE_URL'),
+      }),
+      inject: [ConfigService],
+    }),
     GroupModule,
     ScheduleModule.forRoot(),
     SeedModule,
