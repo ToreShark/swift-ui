@@ -23,7 +23,7 @@ export class ProductsService {
         // .select('name price mainPhoto')
         .skip(skip)
         .limit(limit)
-        .lean()
+        // .lean()
         .exec(),
       this.productModel.countDocuments(),
     ]);
