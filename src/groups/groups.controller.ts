@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  Query,
 } from '@nestjs/common';
 import { FindGroupDto } from './group.dto/group.dto';
 import { PipelineStage } from 'mongoose';
@@ -39,10 +40,12 @@ export class GroupsController {
     }
   }
   @Get()
-  async listAll(): Promise<any[]> {
+  async listAll(
+    
+  ): Promise<any[]> {
     // Изменено возвращаемое значение на Promise<any[]>
     try {
-      const data = await this.groupsService.listAllWithData();
+      const data = await this.groupsService.listAllGroups();
       return data;
       // Вызов метода listAllWithData
     } catch (error) {

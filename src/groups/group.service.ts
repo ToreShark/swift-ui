@@ -41,16 +41,32 @@ export class GroupService {
       throw new InternalServerErrorException('Ошибка при выполнении запроса');
     }
   }
-  async listAllGroups(): Promise<IGroup[]> {
-    return this.groupModel.find().populate('items').exec();
+  async listAllGroups(options?: { skip?: number; limit?: number }): Promise<IGroup[]> {
+    const query = this.groupModel.find();
+  
+    // Применяем skip и limit, если они указаны
+    if (options?.skip) query.skip(options.skip);
+    if (options?.limit) query.limit(options.limit);
+  
+    return query.populate('items').exec();
   }
+  
 
-  async listAllWithData(): Promise<any[]> {
+  async listAllWithPagination(page: number, pageSize: number): Promise<any[]> {
     try {
-      const groups = await this.listAllGroups();
+      const skip = (page - 1) * pageSize;
+      // Получаем только нужное количество групп
+      const groups = await this.groupModel
+        .find()
+        .sort({ _id: -1 }) // Сортировка по id в обратном порядке (новые первыми)
+        .skip(skip)
+        .limit(pageSize)
+        .lean();
+
+      // Далее используйте ту же логику для фильтров, маркеров и продуктов.
       const filters = await this.filterService.listAllFilters();
       const markers = await this.markerService.listAllMarkers();
-      const products = await this.productService.listAllProducts(); // Получение всех продуктов
+      const products = await this.productService.listAllProducts();
 
       return groups.map((group) => {
         const groupFilters = filters.filter(
@@ -61,7 +77,6 @@ export class GroupService {
             ),
         );
 
-        // Предполагается, что group.items содержит идентификаторы продуктов
         const enrichedProducts = products
           .filter((product) =>
             group.items.some((itemId) => itemId.equals(product._id)),
@@ -76,22 +91,7 @@ export class GroupService {
             );
 
             return {
-              _id: product._id.toString(),
-              name: product.name,
-              productModel: product.productModel,
-              price: product.price,
-              mainPhoto: product.mainPhoto,
-              photos: product.photos,
-              temperature: product.temperature,
-              technology: product.technology,
-              hairColor: product.hairColor,
-              skinColor: product.skinColor,
-              details: product.details,
-              application: product.application,
-              composition: product.composition,
-              relatedProducts: product.relatedProducts
-                ? product.relatedProducts.map((rp) => rp._id.toString())
-                : [],
+              ...product.toJSON(),
               markers: productMarkers.map((marker) => ({
                 _id: marker._id.toString(),
                 secondaryWord: marker.secondaryWord,
@@ -106,8 +106,8 @@ export class GroupService {
         };
       });
     } catch (error) {
-      console.error('Error fetching all data:', error);
-      throw new InternalServerErrorException('Error fetching all data');
+      console.error('Error fetching paginated data:', error);
+      throw new InternalServerErrorException('Error fetching paginated data');
     }
   }
 }
