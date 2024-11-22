@@ -11,13 +11,16 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async getProducts(page: number, limit: number): Promise<PaginatedProductsResponseDto> {
+  async getProducts(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedProductsResponseDto> {
     const skip = (page - 1) * limit;
-    
+
     const [data, total] = await Promise.all([
       this.productModel
         .find()
-        .select('name price mainPhoto')
+        // .select('name price mainPhoto')
         .skip(skip)
         .limit(limit)
         .lean()
@@ -25,12 +28,18 @@ export class ProductsService {
       this.productModel.countDocuments(),
     ]);
 
-    const formattedData: ProductListItemDto[] = data.map(item => ({
-      id: item._id.toString(),
-      name: item.name,
-      price: item.price, // Now matches string type
-      mainPhoto: item.mainPhoto, // Now matches Buffer type
+    // Преобразуем данные
+    const formattedData: any[] = data.map((item) => ({
+      ...item, // Включаем все свойства из базы данных
+      id: item._id.toString(), // Преобразуем _id в строку
     }));
+
+    // const formattedData: ProductListItemDto[] = data.map(item => ({
+    //   id: item._id.toString(),
+    //   name: item.name,
+    //   price: item.price, // Now matches string type
+    //   mainPhoto: item.mainPhoto, // Now matches Buffer type
+    // }));
 
     return {
       data: formattedData,
