@@ -17,4 +17,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Запускаем приложение с помощью PM2
-CMD ["pm2-runtime", "start", "dist/main.js"]
+CMD ["pm2-runtime", "npm", "--", "run", "start:prod"]
