@@ -40,9 +40,7 @@ export class GroupsController {
     }
   }
   @Get()
-  async listAll(
-    
-  ): Promise<any[]> {
+  async listAll(): Promise<any[]> {
     // Изменено возвращаемое значение на Promise<any[]>
     try {
       const data = await this.groupsService.listAllGroups();
