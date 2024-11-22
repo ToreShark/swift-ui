@@ -11,43 +11,32 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async getProducts(
-    page: number,
-    limit: number,
-  ): Promise<PaginatedProductsResponseDto> {
-    const skip = (page - 1) * limit;
+  async getProducts(page: number, limit: number): Promise<PaginatedProductsResponseDto> {
+  const skip = (page - 1) * limit;
+    
+  const [data, total] = await Promise.all([
+    this.productModel
+      .find()
+      .populate('markers')
+      .populate('relatedProducts')
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    this.productModel.countDocuments(),
+  ]);
 
-    const [data, total] = await Promise.all([
-      this.productModel
-        .find()
-        // .select('name price mainPhoto')
-        .skip(skip)
-        .limit(limit)
-        // .lean()
-        .exec(),
-      this.productModel.countDocuments(),
-    ]);
+  const formattedData = data.map(item => ({
+    ...item.toJSON(),
+    id: item._id.toString(),
+  }));
 
-    // Преобразуем данные
-    const formattedData: any[] = data.map((item) => ({
-      ...item, // Включаем все свойства из базы данных
-      id: item._id.toString(), // Преобразуем _id в строку
-    }));
-
-    // const formattedData: ProductListItemDto[] = data.map(item => ({
-    //   id: item._id.toString(),
-    //   name: item.name,
-    //   price: item.price, // Now matches string type
-    //   mainPhoto: item.mainPhoto, // Now matches Buffer type
-    // }));
-
-    return {
-      data: formattedData,
-      total,
-      page,
-      limit,
-    };
-  }
+  return {
+    data: formattedData,
+    total,
+    page,
+    limit,
+  };
+}
 
   async listAllProducts(): Promise<Product[]> {
     try {
