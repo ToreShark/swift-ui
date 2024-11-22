@@ -13,6 +13,8 @@ services:
 #    volumes:
 #      - app-data:/usr/src/app
     volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
       - app-data:/usr/src/app
 
 volumes:
