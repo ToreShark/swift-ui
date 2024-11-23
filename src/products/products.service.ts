@@ -12,31 +12,40 @@ export class ProductsService {
   ) {}
 
   async getProducts(page: number, limit: number): Promise<PaginatedProductsResponseDto> {
-  const skip = (page - 1) * limit;
-    
-  const [data, total] = await Promise.all([
-    this.productModel
-      .find()
-      .populate('markers')
-      .populate('relatedProducts')
-      .skip(skip)
-      .limit(limit)
-      .exec(),
-    this.productModel.countDocuments(),
-  ]);
-
-  const formattedData = data.map(item => ({
-    ...item.toJSON(),
-    id: item._id.toString(),
-  }));
-
-  return {
-    data: formattedData,
-    total,
-    page,
-    limit,
-  };
-}
+    const skip = (page - 1) * limit;
+  
+    const [data, total] = await Promise.all([
+      this.productModel
+        .find()
+        .populate('relatedProducts') // Если это требуется
+        .populate('markers') // Если это требуется
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.productModel.countDocuments(),
+    ]);
+  
+    // Формируем данные в строгом порядке, соответствующем ProductListItemDto
+    const formattedData: ProductListItemDto[] = data.map(item => {
+      const raw = item.toJSON();
+  
+      return {
+        id: raw._id.toString(), // Первое поле — id
+        name: raw.name, // Второе поле — name
+        price: raw.price.toString(), // Третье поле — price
+        mainPhoto: raw.mainPhoto, // Поле mainPhoto остается Buffer
+      };
+    });
+  
+    return {
+      data: formattedData,
+      total,
+      page,
+      limit,
+    };
+  }
+  
+  
 
   async listAllProducts(): Promise<Product[]> {
     try {

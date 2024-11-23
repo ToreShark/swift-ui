@@ -11,7 +11,7 @@ class PaginationQueryDto {
     @Min(1)
     @Max(50)
     @Transform(({ value }) => parseInt(value))
-    limit?: number = 5;
+    limit?: number = 20;
   }
 
 export { PaginationQueryDto };
