@@ -25,15 +25,26 @@ export class ProductsService {
       this.productModel.countDocuments(),
     ]);
   
-    // Формируем данные в строгом порядке, соответствующем ProductListItemDto
+    // Формируем данные, чтобы вернуть все свойства таблицы
     const formattedData: ProductListItemDto[] = data.map(item => {
       const raw = item.toJSON();
   
       return {
-        id: raw._id.toString(), // Первое поле — id
-        name: raw.name, // Второе поле — name
-        price: raw.price.toString(), // Третье поле — price
-        mainPhoto: raw.mainPhoto, // Поле mainPhoto остается Buffer
+        id: raw._id.toString(), // Конвертация ObjectId в строку
+        name: raw.name,
+        model: raw.model,
+        price: raw.price.toString(), // Конвертация price в строку
+        mainPhoto: raw.mainPhoto, // Buffer для основного фото
+        photos: raw.photos, // Массив фото
+        temperature: raw.temperature,
+        technology: raw.technology,
+        hairColor: raw.hairColor,
+        skinColor: raw.skinColor,
+        details: raw.details,
+        application: raw.application,
+        composition: raw.composition,
+        markers: raw.markers, // Поле markers (если populate, то будет массив объектов)
+        relatedProducts: raw.relatedProducts, // Поле relatedProducts (если populate, то массив объектов)
       };
     });
   
@@ -44,8 +55,6 @@ export class ProductsService {
       limit,
     };
   }
-  
-  
 
   async listAllProducts(): Promise<Product[]> {
     try {
